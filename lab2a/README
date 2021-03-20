@@ -1,0 +1,114 @@
+NAME: Alex Chen
+EMAIL: achen2289@gmail.com
+ID: 005299047
+
+INCLUDED FILES:
+lab2_add.c - source code for synchronization between threads for an addition operation
+lab2_list.c - source code for synchronization between threads for linked list operations
+SortedList.h, SortedList.c - source code for implementation of a doubly linked list
+*.png - graphs of results of lab2_add and lab2_list
+*.gp - gnuplot files to plot results of lab2_add and lab2_list
+*.csv - csv output of lab2_add and lab2_list
+*.sh - test scripts to generate output of lab2_add and lab2_list to stdout and to csv files
+Makefile - builds all, creates graphs, and makes tarball
+README - this file :)
+
+QUESTION 2.1.1 - causing conflicts:
+Why does it take many iterations before errors are seen?
+Why does a significantly smaller number of iterations so seldom fail?
+
+ANSWER:
+In updating the counter, a thread will retrieve the value of counter 
+from memory, placing it into a register. Then, it will increment or 
+decrement the value of that register. In having many iterations, a thread 
+will take longer to complete its task, meaning there is a greater chance 
+of it exceeding its quantum and having the OS transfer control to a 
+different thread. The problem here is if the original thread exceeds 
+its time slice before placing the updated counter value back into memory. 
+There will be a context switch that saves the thread's state, including 
+registers, onto its TCB and allows a new running thread to run. That newly 
+running thread will perform operations on the un-updated counter value. 
+Thus, errors require large number of iterations.
+
+add-yield-none: For 2 threads, only around 100 iterations are required for 
+the counter to be consistently non-zero. For 4 threads, the number reduces 
+to around 10 iterations. For a larger amount of threads, there will be 
+an even smaller number of iterations required.
+
+QUESTION 2.1.2 - cost of yielding:
+Why are the --yield runs so much slower?
+Where is the additional time going?
+Is it possible to get valid per-operation timings if we are using
+the --yield option?
+If so, explain how. If not, explain why not.
+
+ANSWER:
+The --yield runs are so much slower because each thread has less time to 
+run sequentially before being pre-empted and sharing the CPU with a different 
+thread. Thus, essentially the quantum is shorter, and with this, not only 
+is there greater overhead required in context switching more often, but also 
+there is worse turnaround time. Thus, the total time required and time 
+per operation will also be larger. It is not possible to get valid 
+per-operation timings with the --yield option because we would need to know 
+the exact time cost of context switching.
+
+QUESTION 2.1.3 - measurement errors:
+Why does the average cost per operation drop with increasing iterations?
+If the cost per iteration is a function of the number of iterations, how do 
+we know how many iterations to run (or what the "correct" cost is)?
+
+ANSWER:
+The average cost per operation drops with increasing iterations because 
+each iteration takes less time than creating a new thread. Thus, a larger 
+number of iterations offsets the overhead in creating a thread. The larger 
+the number of iterations, the more accurate the cost of iteration is so that 
+the proportional weight of total operation time contributed by thread creation 
+is as minimal as possible.
+
+QUESTION 2.1.4 - costs of serialization:
+Why do all of the options perform similarly for low numbers of threads?
+Why do the three protected operations slow down as the number of threads rises?
+
+ANSWER:
+The options perform similarly for low numbers of threads because there is less 
+competition for resources such as a mutex for mutex sync or spin lock sync. Thus, 
+each existing thread will not have to wait long in any case and the average cost 
+of operation won't be exaggerated beyond the actual computation's time. However, 
+as the number of threads increases, more and more threads will compete for the 
+resources and will keep other threads waiting. Thus, it takes longer to perform 
+the computations.
+
+QUESTION 2.2.1 - scalability of mutex
+Compare the variation in time per mutex-protected operation vs the number of threads 
+in Part-1 (adds) and Part-2 (sorted lists).
+Comment on the general shapes of the curves, and explain why they have this shape.
+Comment on the relative rates of increase and differences in the shapes of the curves, 
+and offer an explanation for these differences.
+
+ANSWER:
+Cost per mutex-protected operation increases in both cases, as the number of 
+threads increases. The general shape of these curves are a positively sloped 
+linear line. The reason is that as the number of threads increases, the overhead 
+of creating a thread has more and more effect on the average time calculated for 
+an operation. The slope of the curve for part 2 is very similar, although a bit smaller,
+than that of part 1. This is reasonable because I implemented mutex protection for each 
+operation on the list - insert, lookups, and determining length - and each of these 
+operations is on average a larger critical section than in part 1. Thus, there is 
+slightly less overall overhead due to context switching between threads.
+
+QUESTION 2.2.2 - scalability of spin locks
+
+Compare the variation in time per protected operation vs the number of threads for 
+list operations protected by Mutex vs Spin locks. Comment on the general shapes of the 
+curves, and explain why they have this shape.
+Comment on the relative rates of increase and differences in the shapes of the curves, 
+and offer an explanation for these differences.
+
+ANSWER:
+Spin locks behave similarly in terms of time per protected operation, until the 
+number of threads arrives at 4, and above. Before 4 threads, both curves 
+are linearly increasing however. The reason a larger number of threads causes 
+spin lock protected operations to have a larger operation time on average is 
+that mutex synchronization times out - if a thread is waiting for the mutex 
+resource for too long, it will sleep, while a spin lock synchronization will 
+cause the thread to wait forever. This is less efficient overall.

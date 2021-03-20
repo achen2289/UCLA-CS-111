@@ -1,0 +1,15 @@
+NAME: Alex Chen
+EMAIL: achen2289@gmail.com
+ID: 005299047
+
+Included files:
+- lab4c_tcp.c, lab4c_tls.c
+    - C source files for two embedded applications that build and run on a Beaglebone.
+- Makefile
+    default ... build both versions of your program (compiling with the -Wall and -Wextra options).
+    clean ... delete all programs and output created by the Makefile and restore the directory to its freshly untarred state.
+    dist ... create the deliverable tarball.
+    Note that this Makefile is intended to be executed on a Beaglebone, but you may find it convenient to create a Makefile that can be run on either a Beaglebone or a Linux server/desktop/notebook.
+- README
+    - containing descriptions of each of the included files.
+    - any other comments on your submission that you would like to bring to our attention (e.g., research, limitations, features, testing methodology).

@@ -1,0 +1,12 @@
+NAME: Alex Chen
+EMAIL: achen2289@gmail.com
+ID: 005299047
+
+Included files
+- lab1a.c contains my code for lab1a
+- Makefile contains the default, clean, and dist targets
+- The Makefile compiles lab1a.c with the -Wall and -Wextra options
+- It does not contain the check target
+
+Testing
+- I have run my program with the sanity script

@@ -1,0 +1,18 @@
+NAME: Alex Chen
+EMAIL: achen2289@gmail.com
+ID: 005299047
+SLIPDAYS: 2
+
+Included files
+- This overall project contains the code for a multi-process telnet-like client and server
+- lab1b-client.c contains my code for the client, which communicates with the server
+- lab1b-server.c contains my code for the server, which forks a child process
+- Makefile contains the default, clean, and dist targets
+- The Makefile compiles the two c files with the -Wall and -Wextra options
+- It does not contain the check target
+
+Testing
+- I have run my program with the sanity script, and it has passed all tests.
+- I had extraodinary difficulty debugging my frozen server terminal, and with
+- the help of consulting Piazza and stackoverflow, I solved it by 
+- buffering the compression of data from shell!

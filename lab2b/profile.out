@@ -1,0 +1,186 @@
+Total: 3379 samples
+    3195  94.6%  94.6%     3379 100.0% list_op
+     119   3.5%  98.1%      149   4.4% SortedList_lookup
+      18   0.5%  98.6%       18   0.5% ?? /usr/src/debug////////glibc-2.17-c758a686/string/../sysdeps/x86_64/multiarch/strcmp-sse42.S:203
+      12   0.4%  99.0%       12   0.4% ?? /usr/src/debug////////glibc-2.17-c758a686/string/../sysdeps/x86_64/multiarch/strcmp-sse42.S:204
+       9   0.3%  99.2%        9   0.3% ?? /usr/src/debug////////glibc-2.17-c758a686/string/../sysdeps/x86_64/multiarch/strcmp-sse42.S:1734
+       9   0.3%  99.5%       33   1.0% SortedList_insert
+       3   0.1%  99.6%        3   0.1% ?? /usr/src/debug////////glibc-2.17-c758a686/string/../sysdeps/x86_64/multiarch/strcmp-sse42.S:161
+       3   0.1%  99.7%        3   0.1% ?? /usr/src/debug////////glibc-2.17-c758a686/string/../sysdeps/x86_64/multiarch/strcmp-sse42.S:1734
+       2   0.1%  99.7%        2   0.1% ?? /usr/src/debug////////glibc-2.17-c758a686/string/../sysdeps/x86_64/multiarch/strcmp-sse42.S:164
+       2   0.1%  99.8%        2   0.1% ?? /usr/src/debug////////glibc-2.17-c758a686/string/../sysdeps/x86_64/multiarch/strcmp-sse42.S:205
+       1   0.0%  99.8%        1   0.0% ?? /usr/src/debug////////glibc-2.17-c758a686/string/../sysdeps/x86_64/multiarch/strcmp-sse42.S:206
+       1   0.0%  99.9%        1   0.0% ?? /usr/src/debug////////glibc-2.17-c758a686/string/../sysdeps/x86_64/multiarch/strcmp-sse42.S:211
+       1   0.0%  99.9%        1   0.0% ?? /usr/src/debug////////glibc-2.17-c758a686/string/../sysdeps/x86_64/multiarch/strcmp-sse42.S:212
+       1   0.0%  99.9%        1   0.0% ?? /usr/src/debug////////glibc-2.17-c758a686/string/../sysdeps/x86_64/multiarch/strcmp-sse42.S:1733
+       1   0.0%  99.9%        1   0.0% ?? /usr/src/debug////////glibc-2.17-c758a686/string/../sysdeps/x86_64/multiarch/strcmp-sse42.S:1734
+       1   0.0% 100.0%        1   0.0% SortedList_delete
+       1   0.0% 100.0%        1   0.0% SortedList_length
+       0   0.0% 100.0%     3379 100.0% ?? /usr/src/debug////////glibc-2.17-c758a686/misc/../sysdeps/unix/sysv/linux/x86_64/clone.S:118
+       0   0.0% 100.0%     3379 100.0% start_thread
+ROUTINE ====================== list_op in /u/eng/ugrad/lichy/Desktop/cs111/lab2b/lab2_list.c
+  3195   3379 Total samples (flat / cumulative)
+     .      .  135:         random_word[word_size-1] = '\0';
+     .      .  136:         curr->key = random_word;
+     .      .  137:     }
+     .      .  138: }
+     .      .  139: 
+---
+     .      .  140: void *list_op(void *start) {
+     .      .  141:     int start_key = (*(int *)start) * iterations;
+     .      .  142: 
+     .      .  143:     for (int i=start_key; i<start_key+iterations; i++) {
+     .      .  144:         if (synchro && *synchro == 'm') {
+     .      .  145:             pthread_mutex_lock(&mutex);
+     .      .  146:         }
+     .      .  147:         else if (synchro && *synchro == 's') {
+  1855   1855  148:             while (__sync_lock_test_and_set(&lock, 1));
+     .      .  149:         }
+     .      .  150: 
+     .     33  151:         SortedList_insert(head, &pool[i]);
+     .      .  152: 
+     .      .  153:         if (synchro && *synchro == 'm') {
+     .      .  154:             pthread_mutex_unlock(&mutex);
+     .      .  155:         }
+     .      .  156:         else if (synchro && *synchro == 's') {
+     .      .  157:             __sync_lock_release(&lock);
+     .      .  158:         }
+     .      .  159:     }
+     .      .  160: 
+     .      .  161: 
+     .      .  162:     if (synchro && *synchro == 'm') {
+     .      .  163:         pthread_mutex_lock(&mutex);
+     .      .  164:     }
+     .      .  165:     else if (synchro && *synchro == 's') {
+     3      3  166:         while (__sync_lock_test_and_set(&lock, 1));
+     .      .  167:     }
+     .      .  168: 
+     .      1  169:     long length = SortedList_length(head);
+     .      .  170:     if (length == -1) {
+     .      .  171:         check_return_error(-1, list_length_error, 2);
+     .      .  172:     }
+     .      .  173: 
+     .      .  174:     if (synchro && *synchro == 'm') {
+     .      .  175:         pthread_mutex_unlock(&mutex);
+     .      .  176:     }
+     .      .  177:     else if (synchro && *synchro == 's') {
+     .      .  178:         __sync_lock_release(&lock);
+     .      .  179:     }
+     .      .  180: 
+     .      .  181:     
+     .      .  182:     for (int i=start_key; i<start_key+iterations; i++) {
+     .      .  183:         if (synchro && *synchro == 'm') {
+     .      .  184:             pthread_mutex_lock(&mutex);
+     .      .  185:         }
+     .      .  186:         else if (synchro && *synchro == 's') {
+  1337   1337  187:             while (__sync_lock_test_and_set(&lock, 1));
+     .      .  188:         }
+     .      .  189: 
+     .    149  190:         SortedListElement_t *res = SortedList_lookup(head, pool[i].key);
+     .      .  191:         if (res == NULL) {
+     .      .  192:             check_return_error(-1, lookup_element_error, 2);
+     .      .  193:         }
+     .      1  194:         int ret = SortedList_delete(res);
+     .      .  195:         if (ret == 1) {
+     .      .  196:             check_return_error(-1, delete_element_error, 2);
+     .      .  197:         }
+     .      .  198: 
+     .      .  199:         if (synchro && *synchro == 'm') {
+     .      .  200:             pthread_mutex_unlock(&mutex);
+     .      .  201:         }
+     .      .  202:         if (synchro && *synchro == 's') {
+     .      .  203:             __sync_lock_release(&lock);
+     .      .  204:         }
+     .      .  205:     }
+     .      .  206: 
+     .      .  207:     return NULL;
+     .      .  208: }
+---
+     .      .  209: 
+     .      .  210: long create_run_threads() {
+     .      .  211:     pthread_t all_threads[threads];
+     .      .  212:     struct timespec start, end;
+     .      .  213: 
+ROUTINE ====================== list_op in /u/eng/ugrad/lichy/Desktop/cs111/lab2b/lab2_list.c
+  3195   3379 Total samples (flat / cumulative)
+     .      .  135:         random_word[word_size-1] = '\0';
+     .      .  136:         curr->key = random_word;
+     .      .  137:     }
+     .      .  138: }
+     .      .  139: 
+---
+     .      .  140: void *list_op(void *start) {
+     .      .  141:     int start_key = (*(int *)start) * iterations;
+     .      .  142: 
+     .      .  143:     for (int i=start_key; i<start_key+iterations; i++) {
+     .      .  144:         if (synchro && *synchro == 'm') {
+     .      .  145:             pthread_mutex_lock(&mutex);
+     .      .  146:         }
+     .      .  147:         else if (synchro && *synchro == 's') {
+  1855   1855  148:             while (__sync_lock_test_and_set(&lock, 1));
+     .      .  149:         }
+     .      .  150: 
+     .     33  151:         SortedList_insert(head, &pool[i]);
+     .      .  152: 
+     .      .  153:         if (synchro && *synchro == 'm') {
+     .      .  154:             pthread_mutex_unlock(&mutex);
+     .      .  155:         }
+     .      .  156:         else if (synchro && *synchro == 's') {
+     .      .  157:             __sync_lock_release(&lock);
+     .      .  158:         }
+     .      .  159:     }
+     .      .  160: 
+     .      .  161: 
+     .      .  162:     if (synchro && *synchro == 'm') {
+     .      .  163:         pthread_mutex_lock(&mutex);
+     .      .  164:     }
+     .      .  165:     else if (synchro && *synchro == 's') {
+     3      3  166:         while (__sync_lock_test_and_set(&lock, 1));
+     .      .  167:     }
+     .      .  168: 
+     .      1  169:     long length = SortedList_length(head);
+     .      .  170:     if (length == -1) {
+     .      .  171:         check_return_error(-1, list_length_error, 2);
+     .      .  172:     }
+     .      .  173: 
+     .      .  174:     if (synchro && *synchro == 'm') {
+     .      .  175:         pthread_mutex_unlock(&mutex);
+     .      .  176:     }
+     .      .  177:     else if (synchro && *synchro == 's') {
+     .      .  178:         __sync_lock_release(&lock);
+     .      .  179:     }
+     .      .  180: 
+     .      .  181:     
+     .      .  182:     for (int i=start_key; i<start_key+iterations; i++) {
+     .      .  183:         if (synchro && *synchro == 'm') {
+     .      .  184:             pthread_mutex_lock(&mutex);
+     .      .  185:         }
+     .      .  186:         else if (synchro && *synchro == 's') {
+  1337   1337  187:             while (__sync_lock_test_and_set(&lock, 1));
+     .      .  188:         }
+     .      .  189: 
+     .    149  190:         SortedListElement_t *res = SortedList_lookup(head, pool[i].key);
+     .      .  191:         if (res == NULL) {
+     .      .  192:             check_return_error(-1, lookup_element_error, 2);
+     .      .  193:         }
+     .      1  194:         int ret = SortedList_delete(res);
+     .      .  195:         if (ret == 1) {
+     .      .  196:             check_return_error(-1, delete_element_error, 2);
+     .      .  197:         }
+     .      .  198: 
+     .      .  199:         if (synchro && *synchro == 'm') {
+     .      .  200:             pthread_mutex_unlock(&mutex);
+     .      .  201:         }
+     .      .  202:         if (synchro && *synchro == 's') {
+     .      .  203:             __sync_lock_release(&lock);
+     .      .  204:         }
+     .      .  205:     }
+     .      .  206: 
+     .      .  207:     return NULL;
+     .      .  208: }
+---
+     .      .  209: 
+     .      .  210: long create_run_threads() {
+     .      .  211:     pthread_t all_threads[threads];
+     .      .  212:     struct timespec start, end;
+     .      .  213: 

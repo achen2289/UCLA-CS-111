@@ -1,0 +1,9 @@
+NAME: Alex Chen
+EMAIL: achen2289@gmail.com
+ID: 005299047
+
+Included files:
+- lab3a.c: A file that summarizes the EXT2 file system image that is passed in 
+- ext2_fs.h: A modified header file specifying the format of the EXT2 file system
+- Makefile: Contains the default, dist, and clean targets
+- README: this file :)

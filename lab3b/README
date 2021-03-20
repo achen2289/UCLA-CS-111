@@ -1,0 +1,8 @@
+NAME: Alex Chen
+EMAIL: achen2289@gmail.com
+ID: 005299047
+
+Included files:
+lab3b.py - Runs the file system consistency analysis
+Makefile - builds with the default, dist, and clean targets
+README - this file :)

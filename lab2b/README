@@ -1,0 +1,88 @@
+NAME: Alex Chen
+EMAIL: achen2289@gmail.com
+ID: 005299047
+
+INCLUDED FILES:
+lab2_list.c - source code for synchronization between threads for partitioned linked list operations
+SortedList.h, SortedList.c - source code for implementation of a doubly linked list
+*.png - graphs of results of lab2_list
+*.csv - csv output of lab2_list
+lab2_list.gp - gnuplot file to plot results of lab2_list
+test_list.sh - test script to generate output of lab2_list for gnuplot
+Makefile - builds all, creates graphs, and makes tarball
+README - this file :)
+
+Hasher function:
+See comments above hasher function for credits to the author.
+
+QUESTION 2.3.1 - Cycles in the basic list implementation:
+Where do you believe most of the cycles are spent in the 1 and 2-thread list tests ?
+Why do you believe these to be the most expensive parts of the code?
+Where do you believe most of the time/cycles are being spent in the high-thread spin-lock tests?
+Where do you believe most of the time/cycles are being spent in the high-thread mutex tests?
+
+ANSWER:
+I believe most of the cycles in the 1 and 2-thread list tests are spent in performing the 
+list operations. These is the most expensive part of the code because there are few threads 
+meaning less contention, less time wasted spinning, and less overhead in creating the threads. 
+In the high-thread spin-lock tests, I believe most of the time/cycles are spent in 
+waiting for a lock to be released, as spin-locks typically spin for their whole quantum 
+until a lock is released. Thus, it is very inefficient, whereas for the mutex tests, this 
+behavior is less extreme. A thread can go to sleep until the lock has been released. However, 
+the mutex POSIX implementation still requires locking and unlocking the resource, which is 
+expensive.
+
+QUESTION 2.3.2 - Execution Profiling:
+Where (what lines of code) are consuming most of the cycles when the spin-lock version of 
+the list exerciser is run with a large number of threads?
+Why does this operation become so expensive with large numbers of threads?
+
+The time spent running "while (__sync_lock_test_and_set(&lock, 1));" is consuming the most cycles 
+when the spin-lock version of the list exerciser is run with a larger number of threads. This 
+operation becomes expensive because all of the threads will be spinning, waiting for another 
+thread to release the lock. This is wasteful, and with a smaller number of threads, this 
+competition would be less likely to occur.
+
+QUESTION 2.3.3 - Mutex Wait Time:
+Look at the average time per operation (vs. # threads) and the average wait-for-mutex time (vs. #threads).
+Why does the average lock-wait time rise so dramatically with the number of contending threads?
+Why does the completion time per operation rise (less dramatically) with the number of contending threads?
+How is it possible for the wait time per operation to go up faster (or higher) than the completion time per operation?
+
+ANSWER:
+When there are more contending threads, it takes longer for each thread to make the pthread_mutex_lock() 
+call. This is because with a large number of threads, there is a longer time spent competing for 
+the resource. Although threads will not spin endlessly as with spin locks, there still is a lot of overhead. 
+If there were less threads, the resource would be released a lot faster, meaning less competition. 
+The completion time per operation rises with the number of contending threads because there is increasingly 
+more time spent making the pthread_mutex_lock() calls and acquiring/waiting for resources. Thus, this 
+translates into a longer average time to complete each operation, as there are context switches into 
+threads that check if a resource is free, and then that is all that may be performed for each context 
+switch. There is a smaller increase in completion time per operation compared to wait time per lock 
+because the wait time for each thread overlaps, but this is not taken into account in determining the 
+total wait time. On the other hand, for completion time, although more threads are competing for resources, 
+there is still a thread making progress.
+
+QUESTION 2.3.4 - Performance of Partitioned Lists
+Explain the change in performance of the synchronized methods as a function of the number of lists.
+Should the throughput continue increasing as the number of lists is further increased? If not, explain why not.
+It seems reasonable to suggest the throughput of an N-way partitioned list should be equivalent to the 
+throughput of a single list with fewer (1/N) threads. Does this appear to be true in the above curves? 
+If not, explain why not.
+
+ANSWER:
+As the number of lists increases, both of the synchronization methods show a smaller rate of decrease 
+in throughput, as the number of threads increases. This is because with a larger number of lists, 
+there are more resources/locks, meaning each thread will spend less time competing with other threads 
+for resources. Furthermore, there is larger throughput for larger number of lists, for each number of 
+threads. This trend will continue, as with more lists, each thread has a less chance to perform an 
+operation on a list that another thread is operating on. This trend will end when there are as many 
+lists as threads * iterations, because each element then has its own list, so there is no competition 
+among threads in inserting, looking up, or deleting elements. Having any more lists beyond that 
+will not improve the throughput. The statement is supported for runs in which the number of lists 
+is closer (4 versus 2, 8 versus 4), however, it is not supported when comparing to a single list. For 
+example, for 8 lists and 2 threads, the throughput is very close to that of 4 lists and 1 thread. 
+However, for 16 lists and 16 threads, the throughput is not close to that of 1 list and 1 thread. The 
+difference increases as the number of lists increases because there is a lot more efficiency created 
+through partitioning lists at least two ways. The number of threads that can concurrently perform 
+a list operation without waiting for resources to be released increases.

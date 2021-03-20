@@ -1,0 +1,24 @@
+NAME: Alex Chen
+EMAIL: achen2289@gmail.com
+ID: 005299047
+
+Included files
+- lab0.c contains my code for lab0
+- Makefile contains the default, check, clean, and dist targets
+- smoke_test.sh contains the test cases used by the check target in Makefile 
+- backtrace.png contains the segmentation fault and backtrace
+- breakpoint.png contains a debugging session with a breakpoint set
+  at the segmentation fault, the dereferenced pointer is indeed null
+
+Smoke tests
+- TEST 1: no arguments passed in, return status 0 expected
+- TEST 2: only input file specified, return status 0 expected
+- TEST 3: only output file specified, return status 0 expected
+- TEST 4: input and output file specified, return status 0 expected
+- TEST 5: invalid option passed, return status 1 expected
+- TEST 6: missing argument for option, return status 1 expected
+- TEST 7: input file cannot be opened, return status 2 expected
+- TEST 8: output file cannot be opened, return status 3 expected
+- TEST 9: segmentation fault forced and caught, return status 4 expected
+- TEST 10: segmentation fault forced and not caught, return status 139 expected
+- TEST 11: input and output of program match, return status 0 expected
